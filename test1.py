@@ -10,7 +10,9 @@ cursor = conn.cursor()
 
 #url = "https://www.marca.com/futbol/barcelona.html?intcmp=MENUESCU&s_kw=barcelona"
 
-TeamsList = ("atletico","barcelona","real-madrid","valencia","sevilla","espanyol","betis","alaves","athletic","eibar","celta","getafe","huesca","leganes","levante","rayo","valladolid","villarreal","real-sociedad","girona")
+TeamsList = ("atletico","barcelona","real-madrid","valencia","sevilla","espanyol",
+"betis","alaves","athletic","eibar","celta","getafe","huesca","leganes",
+"levante","rayo","valladolid","villarreal","real-sociedad","girona")
 
 urlbase = "https://www.marca.com/futbol/%s.html" 
 newurl = (urlbase,"atletico")
@@ -22,16 +24,14 @@ for CurrentTeam in TeamsList:
     soup = BeautifulSoup(response.text, 'html.parser')
     good_html = soup.prettify()
     results = soup.find_all('ul', attrs={"class":"auto-items"})
-    #f = open("noticias.txt","w+") //In case save in file
     headers = results[0].findAll('header',attrs={"class":"mod-header"})
     for i in headers:    
          hreflink = i.findAll('a')
          Title = hreflink[0]['title']
          Link = hreflink[0]['href']    
          Team = CurrentTeam
-         Date = " "
-        #f.write("Titulo: " + title + "Enlace: " + link) //In case save in file
-        # #date
+         StartDate = Link.find('2019')
+         Date = (Link[StartDate:StartDate+10])
          params = (Team,Date,Link,Title)
          cursor.execute('SELECT * FROM News WHERE (Title=? AND Team=?)',(Title,CurrentTeam))
          entry = cursor.fetchone()
@@ -39,6 +39,5 @@ for CurrentTeam in TeamsList:
              cursor.execute("INSERT INTO News VALUES (NULL, ?, ?, ?, ?)", params)
              print("    New entry added")
 
-#f.close() //In case save in file
 conn.commit()
 conn.close()

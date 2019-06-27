@@ -10,7 +10,7 @@ cursor = conn.cursor()
 
 #url = "https://www.marca.com/futbol/barcelona.html?intcmp=MENUESCU&s_kw=barcelona"
 
-TeamsList = ("atletico","barcelona","real-madrid","valencia","sevilla","espanyol","betis","alaves")
+TeamsList = ("atletico","barcelona","real-madrid","valencia","sevilla","espanyol","betis","alaves","athletic","eibar","celta","getafe","huesca","leganes","levante","rayo","valladolid","villarreal","real-sociedad","girona")
 
 urlbase = "https://www.marca.com/futbol/%s.html" 
 newurl = (urlbase,"atletico")
@@ -33,8 +33,11 @@ for CurrentTeam in TeamsList:
         #f.write("Titulo: " + title + "Enlace: " + link) //In case save in file
         # #date
          params = (Team,Date,Link,Title)
-         cursor.execute("INSERT INTO News VALUES (NULL, ?, ?, ?, ?)", params)
-
+         cursor.execute('SELECT * FROM News WHERE (Title=? AND Team=?)',(Title,CurrentTeam))
+         entry = cursor.fetchone()
+         if entry is None:
+             cursor.execute("INSERT INTO News VALUES (NULL, ?, ?, ?, ?)", params)
+             print("    New entry added")
 
 #f.close() //In case save in file
 conn.commit()
